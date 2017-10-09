@@ -1,0 +1,13 @@
+{# Formatted Data For Scoreboard #}
+
+<p class="column-header">Latest Submissions</p>
+<table border="1">
+  {% for submission in data %}
+  <tr>
+    <td>{{ submission.challpoints|string }}</td>
+    <td>{{ submission.challname }}</td>
+    <td>{{ submission.teamname }}</td>
+    <td>{{ submission.time }}</td>
+  </tr>
+  {% endfor %}
+</table>

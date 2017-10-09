@@ -1,0 +1,16 @@
+{# Formatted Data For Scoreboard #}
+
+{% for i in range(teams|length + 20) %}
+{% set team = teams[i % 20] %}
+<div class="team">
+  <div class="team-contents">
+    <div class="team-position">{{ team.position|string }}</div>
+    <div class="team-meta">
+      <div class="team-name">{{ team.name }}</div>
+      <div class="team-solved">{{ team.solved|string }} Challenges Solved</div>
+    </div>
+  </div>
+  <div class="team-score">{{ team.score }}</div>
+</div>
+{% endfor %}
+
