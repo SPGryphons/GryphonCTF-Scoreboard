@@ -1,0 +1,201 @@
+{# GCTF2017 Scoreboard by Optixal #}
+
+<html>
+  <head>
+    <title>Live Scoreboard | GCTF2017</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <div class="column">
+        <p class="column-header">Scoreboard | Hack Harder</p>
+        <img id="loading" src="{{ url_for('static', filename='images/loading.svg') }}">
+        <div id="scoreboard" class="js-loop">{# Formatted scoreboard that will be pulled using Javascript #}</div>
+      </div>
+      <div class="column column-2">
+        <div>
+          <p class="column-header">Countdown | Extended 1 HR</p>
+          <div id="clockdiv">
+            <div>
+              <span class="days">00</span>
+              <div class="smalltext">Days</div>
+            </div>
+            <div>
+              <span class="hours">00</span>
+              <div class="smalltext">Hours</div>
+            </div>
+            <div>
+              <span class="minutes">00</span>
+              <div class="smalltext">Minutes</div>
+            </div>
+            <div>
+              <span class="seconds">00</span>
+              <div class="smalltext">Seconds</div>
+            </div>
+          </div>
+        </div>
+        <div id="latest"></div>
+      </div>
+    </div>
+    <footer>Optixal</footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+
+// Configurations
+var refreshDelay = 120 * 1000;
+var latestSubmissionDelay = 10 * 1000;
+var autoScrollDelay = 50; // scroll speed, smaller faster
+var autoScrollStartDelay = 4 * 1000; // delay start of auto scroll
+var loopBottomOffset = 40; // prevents flickering
+
+// Scoreboard Variables
+var scoreboard = document.getElementById('scoreboard');
+var scoreboardJQ = $('#scoreboard');
+var latestSubmissionsJQ = $('#latest');
+
+// AJAX Loading Spinner
+var loading = $('#loading').hide();
+$(document)
+  .ajaxStart(function () {
+    loading.show();
+  })
+  .ajaxStop(function () {
+    loading.hide();
+  });
+
+// Auto Scroll Function
+function autoScroll() {
+  scoreboard.scrollBy(0, 1);
+  setTimeout(autoScroll, autoScrollDelay);
+}
+
+// Loop Scroll Functions
+function loopScroll() {
+
+  var doc = window.document,
+    context = doc.querySelector('.js-loop'),
+    clones = context.querySelectorAll('.is-clone'),
+    disableScroll = false,
+    scrollHeight = 0,
+    scrollPos = 0,
+    clonesHeight = 0,
+    i = 0;
+
+  function getScrollPos () {
+    return (context.pageYOffset || context.scrollTop) - (context.clientTop || 0);
+  }
+
+  function setScrollPos (pos) {
+    context.scrollTop = pos;
+  }
+
+  function getClonesHeight () {
+    clonesHeight = 0;
+
+    for (i = 0; i < clones.length; i += 1) {
+      clonesHeight = clonesHeight + clones[i].offsetHeight;
+    }
+
+    return clonesHeight;
+  }
+
+  function reCalc () {
+    scrollPos = getScrollPos();
+    scrollHeight = context.scrollHeight;
+    clonesHeight = getClonesHeight();
+
+    if (scrollPos <= 0) {
+      setScrollPos(1);
+    }
+  }
+
+  function scrollUpdate () {
+    if (!disableScroll) {
+      scrollPos = getScrollPos();
+
+      if (clonesHeight + scrollPos >= scrollHeight - loopBottomOffset) {
+        // Scroll to the top when reached the bottom
+        setScrollPos(1);
+        disableScroll = true;
+      } else if (scrollPos <= 0) {
+        // Scroll to the bottom when reached the top
+        setScrollPos(scrollHeight - clonesHeight);
+        disableScroll = true;
+      }
+    }
+
+    if (disableScroll) {
+      // Disable scroll-jumping for a short time to avoid flickering
+      window.setTimeout(function () {
+        disableScroll = false;
+      }, 40);
+    }
+  }
+
+  window.requestAnimationFrame(reCalc);
+
+  context.addEventListener('scroll', function () {
+    window.requestAnimationFrame(scrollUpdate);
+  }, false);
+
+  window.addEventListener('resize', function () {
+    window.requestAnimationFrame(reCalc);
+  }, false);
+
+}
+
+// Refresh Page
+function refresh() {
+  location.reload();
+}
+
+// Refresh Animations
+function refreshInitiate() {
+  scoreboardJQ.fadeOut();
+  latestSubmissionsJQ.fadeOut();
+  setTimeout(refresh, 1000);
+}
+
+// Scoreboard Updater - Entry for other scoreboard-related functions
+function scoreboardUpdater() {
+  $.get('{{ url_for('data') }}', function(data) {
+    scoreboardJQ.hide().html(data).fadeIn();
+
+    // Loop Scrolling
+    loopScroll();
+
+    // Auto Scroller
+    setTimeout(autoScroll, autoScrollStartDelay);
+
+  });
+}
+scoreboardUpdater();
+
+function latestSubmissionsUpdater() {
+  $.ajax({
+    url: "{{ url_for('latest') }}",
+    type: "get",
+    success: function(data){
+        latestSubmissionsJQ.html(data);
+        //setTimeout(latestSubmissionsUpdater, latestSubmissionDelay);
+    }, 
+    global: false
+  });
+}
+function latestSubmissionUpdaterFirst() {
+  $.ajax({
+    url: "{{ url_for('latest') }}",
+    type: "get",
+    success: function(data){
+        latestSubmissionsJQ.hide().html(data).fadeIn();
+        setTimeout(latestSubmissionsUpdater, latestSubmissionDelay);
+    }, 
+    global: false
+  });
+}
+latestSubmissionUpdaterFirst();
+
+    </script>
+  </body>
+</html>

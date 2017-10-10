@@ -93,6 +93,14 @@ def data():
 def scoreboard():
     return render_template('scoreboard.html')
 
+@app.route('/results')
+def results():
+    return render_template('results.html')
+
+@app.route('/timer')
+def timer():
+    return render_template('timer.html')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
 
