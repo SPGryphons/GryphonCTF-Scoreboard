@@ -14,7 +14,7 @@
       </div>
       <div class="column column-2">
         <div>
-          <p class="column-header">Countdown</p>
+          <p class="column-header">Countdown (Extended 1 HR)</p>
           <div id="clockdiv">
             <div>
               <span class="days"></span>
@@ -43,8 +43,8 @@
     <script>
 
 // Configurations
-var refreshDelay = 60 * 1000;
-var latestSubmissionDelay = 5000;
+var refreshDelay = 120 * 1000;
+var latestSubmissionDelay = 10 * 1000;
 var autoScrollDelay = 50; // scroll speed, smaller faster
 var autoScrollStartDelay = 4 * 1000; // delay start of auto scroll
 var loopBottomOffset = 40; // prevents flickering
@@ -153,6 +153,7 @@ function refresh() {
 // Refresh Animations
 function refreshInitiate() {
   scoreboardJQ.fadeOut();
+  latestSubmissionsJQ.fadeOut();
   setTimeout(refresh, 1000);
 }
 
@@ -236,7 +237,7 @@ function initializeClock(id, endtime) {
   var timeinterval = setInterval(updateClock, 1000);
 }
 
-var deadline = 'October 10 2017 14:00:00 GMT+0800';
+var deadline = 'October 10 2017 15:00:00 GMT+0800';
 initializeClock('clockdiv', deadline);
 
     </script>
