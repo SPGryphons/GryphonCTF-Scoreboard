@@ -5,6 +5,7 @@ from flask import Flask, url_for, redirect, render_template
 from pprint import pprint
 
 app = Flask(__name__)
+BASEURL = 'https://2017.gryphonctf.com'
 
 @app.route('/')
 def index():
@@ -35,7 +36,7 @@ def getLatest():
                 teamName = teamMap[chall['team']]
                 if chall['team'] not in downloadedTeams:
                     print('[*] Downloading team {} info for chall {}...'.format(chall['team'], chall['chal']))
-                    raw = requests.get('https://2017.gryphonctf.com/solves/{}'.format(chall['team']), timeout=3)
+                    raw = requests.get('{}/solves/{}'.format(BASEURL, chall['team']), timeout=3)
                     parsed = raw.json()['solves']
                     downloadedTeams[chall['team']] = parsed
                 else:
@@ -71,7 +72,7 @@ def getData():
     while True:
         try:
             print('[*] Downloading scoreboard data...')
-            raw = requests.get('https://2017.gryphonctf.com/top/20', timeout=4)
+            raw = requests.get('{}/top/20'.format(BASEURL), timeout=4)
             print('[+] Smexy...')
             parsed = raw.json()['places']
             for teamPosition, teamDict in parsed.items():
