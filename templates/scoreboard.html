@@ -14,7 +14,7 @@
       </div>
       <div class="column column-2">
         <div>
-          <p class="column-header">Countdown | Extended 1 HR</p>
+          <p class="column-header">Countdown</p>
           <div id="clockdiv">
             <div>
               <span class="days"></span>
@@ -34,7 +34,7 @@
             </div>
           </div>
         </div>
-        <div id="latest"></div>
+        <!-- <div id="latest"></div> -->
       </div>
     </div>
     <footer>Optixal</footer>
@@ -174,6 +174,7 @@ function scoreboardUpdater() {
 }
 scoreboardUpdater();
 
+/*
 function latestSubmissionsUpdater() {
   $.ajax({
     url: "{{ url_for('latest') }}",
@@ -197,7 +198,7 @@ function latestSubmissionUpdaterFirst() {
   });
 }
 latestSubmissionUpdaterFirst();
-
+*/
 function getTimeRemaining(endtime) {
   var t = Date.parse(endtime) - Date.parse(new Date());
   var seconds = Math.floor((t / 1000) % 60);
@@ -223,7 +224,7 @@ function initializeClock(id, endtime) {
   function updateClock() {
     var t = getTimeRemaining(endtime);
 
-    daysSpan.innerHTML = t.days;
+    daysSpan.innerHTML = (t.days < 10) ? ('0' + t.days) : t.days;
     hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
     minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
     secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
@@ -237,7 +238,7 @@ function initializeClock(id, endtime) {
   var timeinterval = setInterval(updateClock, 1000);
 }
 
-var deadline = 'October 10 2017 15:00:00 GMT+0800';
+var deadline = 'April 15 2018 15:00:00 GMT+0800';
 initializeClock('clockdiv', deadline);
 
     </script>

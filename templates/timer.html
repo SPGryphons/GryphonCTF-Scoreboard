@@ -8,7 +8,7 @@
   <body>
     <div class="container timer-middle">
       <div>
-        <p class="column-header">Countdown | Extended 1 HR | Hack Harder</p>
+        <p class="column-header">Countdown | Hack Harder</p>
         <div id="clockdiv">
           <div>
             <span class="days"></span>
@@ -58,7 +58,7 @@ function initializeClock(id, endtime) {
   function updateClock() {
     var t = getTimeRemaining(endtime);
 
-    daysSpan.innerHTML = t.days;
+    daysSpan.innerHTML = (t.days < 10) ? ('0' + t.days) : t.days;
     hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
     minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
     secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
@@ -72,7 +72,7 @@ function initializeClock(id, endtime) {
   var timeinterval = setInterval(updateClock, 1000);
 }
 
-var deadline = 'October 10 2017 15:00:00 GMT+0800';
+var deadline = 'April 15 2018 15:00:00 GMT+0800';
 initializeClock('clockdiv', deadline);
 
     </script>

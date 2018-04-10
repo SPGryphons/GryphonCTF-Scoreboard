@@ -1,11 +1,12 @@
 # Optixal
 
-import requests, time
+import requests, time, datetime
 from flask import Flask, url_for, redirect, render_template
 from pprint import pprint
 
 app = Flask(__name__)
-BASEURL = 'https://2017.gryphonctf.com'
+BASEURL = 'https://2018-lite.gryphonctf.com/'
+
 
 @app.route('/')
 def index():
@@ -62,22 +63,24 @@ class Team():
     def __init__(self, teamPosition, teamDict):
         self.position = int(teamPosition)
         self.name = teamDict.get('name', '')
-        self.id = teamDict.get('id', '')
-        self.solves = [solve for solve in teamDict.get('solves', []) if solve.get('chal')]
-        self.solved = len(self.solves)
-        self.score = sum([chall.get('value', 0) for chall in self.solves])
+        self.id = teamDict.get('uuid', '')
+        self.lastAttempt = time.strftime('%H:%M', time.localtime(teamDict.get('last_attempt', 0)))
+        # self.solves = [solve for solve in teamDict.get('solves', []) if solve.get('chal')]
+        # self.solved = len(self.solves)
+        self.score = teamDict.get('score', 0)
 
 def getData():
     data = []
     while True:
         try:
             print('[*] Downloading scoreboard data...')
-            raw = requests.get('{}/top/20'.format(BASEURL), timeout=4)
+            raw = requests.get('{}/api/public/scoreboard/ranking'.format(BASEURL), timeout=4)
             print('[+] Smexy...')
-            parsed = raw.json()['places']
-            for teamPosition, teamDict in parsed.items():
-                t = Team(teamPosition, teamDict)
-                data.append(t)
+            if raw.json()['code'] == "OK":
+                parsed = raw.json()['message']
+                for teamRank, teamDict in enumerate(parsed):
+                    t = Team(teamRank + 1, teamDict)
+                    data.append(t)
             break
         except Exception as e:
             print(e)
